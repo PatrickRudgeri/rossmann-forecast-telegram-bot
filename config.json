@@ -1,5 +1,5 @@
 {
-"TOKEN": "1508204454:AAH54BEN9QZTZz6NJDzT8Ti4Mr6sZT6W9x4",
+"TOKEN": "",
 "ENDPOINT_PROD": "https://bot-sales-forecasting.herokuapp.com",
 "ENDPOINT_DEV": "" ,
 "ENDPOINT_MODEL": "http://api-sales-forecasting.herokuapp.com/"
