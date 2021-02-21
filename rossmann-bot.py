@@ -3,19 +3,23 @@ from flask import Flask, Response, request
 import requests
 import json
 import os
+import dotenv
 
-with open("config.json", "r") as f:
-	config = json.loads(f.read())
+dotenv.load_dotenv(dotenv.find_dotenv())
 
 # ---- CONSTANTS
-BASE_URL = f"https://api.telegram.org/bot{config['TOKEN']}"
+TOKEN = os.getenv("TOKEN")
+ENDPOINT_PROD = os.getenv("ENDPOINT_PROD")
+ENDPOINT_DEV = os.getenv("ENDPOINT_DEV")
+ENDPOINT_MODEL = os.getenv("ENDPOINT_MODEL")
+BASE_URL = os.getenv("BASE_URL") + TOKEN
 
 # ----
 
 # set webhook and cleaning previous messages
 # https://api.telegram.org/bot1508204454:AAH54BEN9QZTZz6NJDzT8Ti4Mr6sZT6W9x4/setWebhook?url=https://patrick-2764276b.localhost.run&drop_pending_updates=true
 
-requests.get(f"{BASE_URL}/setWebhook?url={config['ENDPOINT_PROD']}&drop_pending_updates=true")
+requests.get(f"{BASE_URL}/setWebhook?url={ENDPOINT_PROD}&drop_pending_updates=true")
 
 
 # --------------
@@ -30,7 +34,7 @@ def df_test_stores(df:pd.DataFrame, stores) -> pd.DataFrame:
 	else:
 		print("stores must to be a list or int")
 		return None
-	
+
 	df1 = df1[(df1["Open"] != 0) & (~df1["Open"].isnull())]
 	df1.drop("Id", axis=1, inplace=True)
 	return df1
@@ -48,12 +52,12 @@ def load_dataset(stores):
 	data_stores = df_test_stores(df_test, stores)
 
 	stores_data = None if len(data_stores) == 0 else json.dumps(data_stores.to_dict(orient="records"))
-	
+
 	return stores_data
 
 def predict(stores_data):
 	# API call
-	url = f"{config['ENDPOINT_MODEL']}/rossmann/predict"
+	url = f"{ENDPOINT_MODEL}/rossmann/predict"
 	header = {"Content-type": "application/json"}
 	# data = all_data
 	data = stores_data
@@ -85,7 +89,7 @@ def parse_message(message):
 		store_id = int(text)
 	except ValueError:
 		store_id = None
-		
+
 
 	return chat_id, store_id
 
@@ -98,7 +102,7 @@ def index():
 		message = request.get_json()
 
 		chat_id, store_id = parse_message(message)
-		
+
 		if store_id is None:
 			send_message(chat_id, "Store ID is wrong.")
 			return Response("Ok", status=200)

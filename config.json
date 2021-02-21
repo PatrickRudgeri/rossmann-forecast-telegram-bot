@@ -1,6 +1,0 @@
-{
-"TOKEN": "",
-"ENDPOINT_PROD": "https://bot-sales-forecasting.herokuapp.com",
-"ENDPOINT_DEV": "" ,
-"ENDPOINT_MODEL": "http://api-sales-forecasting.herokuapp.com/"
-}
